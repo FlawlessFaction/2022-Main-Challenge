@@ -1,4 +1,17 @@
 function Resolve-SidToName {
+    <#
+    .SYNOPSIS
+    Resolves the username of a SID.
+
+    .DESCRIPTION
+    Accepts a SID and resolves it to a Windows or AD username.
+
+    .PARAMETER Sid
+    Specifies the SID to resolve.
+
+    .EXAMPLE
+    Resolve-SidToName -Sid (whoami /logonid)
+    #>
     [CmdletBinding()]
     param (
         # Specifies the SID of a Windows identity.
