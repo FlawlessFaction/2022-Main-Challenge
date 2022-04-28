@@ -17,18 +17,15 @@ function Get-PSRemotingUsers {
 
     process {
         try {
-            $RemoteInfo = @()
             foreach ($Computer in $ComputerName) {
                 Write-Verbose "Processing [$ComputerName]"
-                
-                $RemoteInfo.add([PSCustomObject]@{
+                [PSCustomObject]@{
                     UserName        = (Get-CimInstance -Class win32_computersystem -ComputerName $ComputerName).UserName
                     IPAddress       = (Get-CimInstance -Class Win32_NetworkClient -ComputerName $ComputerName).IPAddress
                     WhenConnected   = (Get-CimInstance -Class Win32_LogonSession -ComputerName $ComputerName).StartTime
                     LengthConnected = (Get-CimInstance -Class Win32_LogonSession -ComputerName $ComputerName).LengthConnected
-                }]
+                }
             }
-            return $RemoteInfo | Format-Table
         } catch {
             $PSCmdlet.ThrowTerminatingError($PSItem)
         }
