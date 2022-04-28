@@ -59,16 +59,6 @@ Function Get-ComputerStartupInfo {
             #Event 1074 = Normal Restart
             Get-WinEvent -FilterHashtable @{Logname = 'System'; ID = 1074 } -MaxEvents 1 -ErrorAction SilentlyContinue
         }
-
-        [ScriptBlock]$ResolveSid = {
-            param($sid)
-            try {
-                $objSID = New-Object System.Security.Principal.SecurityIdentifier($sid)
-                $objSID.Translate([System.Security.Principal.NTAccount])
-            } catch {
-                Write-Warning "Unable to resolve SID to username"
-            }
-        }
     }
 
     process {
@@ -106,7 +96,7 @@ Function Get-ComputerStartupInfo {
                         $LastShutdownType = "Normal"
                         $Downtime = $CIMData.LastBootUpTime - $LastShutdownTime
                         if (-not [string]::IsNullOrWhitespace($CIMData.UserId)) {
-                            $LastShutdownUser = $ResolveSid.Invoke($CIMData.UserId)
+                            $LastShutdownUser = Resolve-SidToName -Sid $CIMData.UserId
                         }
                     }
                     Default { $LastShutdownType = "Unknown" }
