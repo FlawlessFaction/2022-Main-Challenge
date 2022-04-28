@@ -1,9 +1,9 @@
 <#
 .DESCRIPTION
-Testing the main script
+Testing Set-FlawlessUser
 #>
 
-Describe "Main Script" {
+Describe "Set-FlawlessUser" {
 
     It "Runs Correctly" {
         $result = Set-FlawlessUser -User user1 -ComputerName wee -ConnectionUserName This -KeyPath ./txt
