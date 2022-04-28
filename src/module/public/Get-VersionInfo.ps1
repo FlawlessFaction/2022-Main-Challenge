@@ -1,7 +1,7 @@
 function Get-VersionInfo {
     <#
     .SYNOPSIS
-    Show running process
+    Get Version Info for SSH, Powershell, and OS
 
     .DESCRIPTION
     A unified command to return version information for installed versions of PowerShell, the operating system, and the ssh version.
