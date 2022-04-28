@@ -4,9 +4,6 @@ Testing the main script
 #>
 
 Describe "Main Script" {
-    BeforeAll {
-
-    }
 
     It "Runs Correctly" {
         $result = Get-VersionInfo
