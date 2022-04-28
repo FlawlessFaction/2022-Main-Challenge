@@ -1,11 +1,35 @@
-[cmdletbinding()]
-param(
-    [Parameter(
-        Mandatory
-    )]
-    [ValidateScript({ Test-Path -Path $_ -PathType Leaf })]
-    [String] $ConfigFilePath
-)
+function Get-DiskSpaceInfo {
+    [cmdletbinding()]
+    param(
+        [Parameter(
+            Mandatory
+        )]
+        [ValidateScript({ Test-Path -Path $_ -PathType Leaf })]
+        [String] $ConfigFilePath
+    )
+
+    process {
+        try {
+            $configObject = Get-Content -Path $ConfigFilePath | ConvertFrom-Json
+
+            $configObject.Hosts |
+
+                ForEach-Object -Process {
+                    New-SSHSession -KeyFilePath $configObject.KeyFilePath -Username $configObject.Username -Computer $_
+                } |
+
+                ForEach-Object -Process {
+                    Invoke-Command -Session $_ -ScriptBlock { Get-Disk }
+                } |
+
+                ForEach-Object -Process {
+                    Out-PrettyDiskInfo -DiskInfo $_
+                }
+        } catch {
+            $PSCmdlet.ThrowTerminatingError($PSItem)
+        }
+    }
+}
 
 function New-SSHSession {
     [cmdletbinding()]
@@ -76,19 +100,3 @@ function Out-PrettyDiskInfo {
         }
     }
 }
-
-$configObject = Get-Content -Path $ConfigFilePath | ConvertFrom-Json
-
-$configObject.Hosts |
-
-    ForEach-Object -Process {
-        New-SSHSession -KeyFilePath $configObject.KeyFilePath -Username $configObject.Username -Computer $_
-    } |
-
-    ForEach-Object -Process {
-        Invoke-Command -Session $_ -ScriptBlock { Get-Disk }
-    } |
-
-    ForEach-Object -Process {
-        Out-PrettyDiskInfo -DiskInfo $_
-    }
